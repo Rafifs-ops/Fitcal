@@ -5,6 +5,7 @@ import { defineProps, toRefs } from 'vue';
 // --- MENERIMA DATA HASIL HITUNG KALKUATOR MELALUI PROPS ---
 const props = defineProps(["hasilHitung", "inputData"]); // Menerima data hasil perhitungan dan input data dari komponen induk(PremCalc.vue)
 const { hasilHitung, inputData } = toRefs(props) // Menjaga reaktivitas data/variabel saat menggunakan destruk
+// --- AKHIR MENERIMA DATA HASIL HITUNG KALKUATOR MELALUI PROPS ---
 
 // --- KONFIGURASI TAMPILAN UI MODAL ---
 const showPremiumModal = ref(false); // State untuk mengontrol tampilan modal
@@ -21,6 +22,7 @@ function openPremiumModal() { // Fungsi untuk menampilkan modal saat tombol CTA 
 function closePremiumModal() { // Fungsi untuk menutup modal
     showPremiumModal.value = false;
 }
+// --- AKHIR KONFIGURASI TAMPILAN UI MODAL ---
 
 // --- CHATBOT ---
 const messages = ref([]); // Menyimpan semua pesan AI dan user
@@ -127,6 +129,7 @@ async function sendMessage() {
         scrollToBottom(); // Pastikan scroll ke pesan error
     }
 }
+// --- AKHIR CHATBOT ---
 </script>
 
 <template>

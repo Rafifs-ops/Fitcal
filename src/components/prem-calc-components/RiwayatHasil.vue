@@ -20,7 +20,8 @@ onMounted(async () => {
     await data.fetchUsers(); // Menjalankan fungsi untuk mendapatkan data
 })
 
-const user = computed(() => { // Menggunakan computed agar nilai variable dapat berubah secara otomatis tergantung kondisi
+// Menggunakan computed agar nilai variable dapat berubah secara otomatis tergantung kondisi
+const user = computed(() => { 
     return users.value.find((u) => u.id === userId); // Mendapatkan data user yang sesuai dengan id yang ada dan menyimpannnya
     // Tipe data: objek
 })
@@ -41,7 +42,7 @@ const savedResults = user.value.historyResults; // Mendapatkan array historyResu
                 <div class="history-modal-body">
                     <h4 class="modal-title mb-4">Riwayat Hasil Kalkulator</h4>
 
-                    <div v-if="savedResults.length > 0" class="results-list-container">
+                    <div v-if="savedResults" class="results-list-container">
                         <div v-for="result in savedResults" :key="result.id" class="result-card">
                             <div class="result-date">{{ result.date.toDate() }}</div>
                             <div class="result-stats">

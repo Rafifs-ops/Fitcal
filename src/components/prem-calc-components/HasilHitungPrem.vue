@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, toRefs } from 'vue';
+import { defineProps, ref, toRefs } from 'vue';
 import { db } from '@/firebase/config';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
@@ -8,8 +8,10 @@ const { hasilHitung } = toRefs(props) // Menjaga reaktivitas data/variabel saat 
 
 const userId = localStorage.getItem("userId");
 
+const loading = ref(false);
 async function simpanHasil() {
     try {
+        loading.value = true // Menampilkan tampilan loading
         const docRef = doc(db, 'users', userId);
         const newResult = {
             hasilBmi: hasilHitung.value.bmi, // Gunakan .value untuk mengakses data dari toRefs
@@ -27,6 +29,8 @@ async function simpanHasil() {
 
     } catch (error) {
         console.error('Error saat menambahkan field: ', error);
+    } finally {
+        loading.value = false // Menghilangkan tampilan loading
     }
 }
 </script>
@@ -71,7 +75,15 @@ async function simpanHasil() {
             </div>
         </div>
     </div>
-    <button type="button" class="btn btn-success mt-3" @click="simpanHasil">Simpan Hasil</button>
+
+    <!--Tampilan tombol jika sedang tidak loading (user belum klik tombol)-->
+    <button v-if="!loading" type="button" class="btn btn-success mt-3" @click="simpanHasil">Simpan Hasil</button>
+
+    <!--Tampilan loading jika user klik tombol simpan hasil-->
+    <button v-if="loading" class="btn btn-success mt-3" type="button" disabled>
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        <span class="visually-hidden" role="status">Loading...</span>
+    </button>
 </template>
 
 <style scoped>
