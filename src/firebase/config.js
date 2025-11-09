@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD6sYaksaqTHvztN6jILYbvqv6ETrzUnvU",
-  authDomain: "fitcal-database.firebaseapp.com",
-  projectId: "fitcal-database",
-  storageBucket: "fitcal-database.firebasestorage.app",
-  messagingSenderId: "1025556078017",
-  appId: "1:1025556078017:web:5bd835d69af84da49ca340"
+  apiKey: "AIzaSyBeTh_wBP5K_1VLXFDLtsWmRvWPfNt1YrA",
+  authDomain: "fitcal-indonesia.firebaseapp.com",
+  projectId: "fitcal-indonesia",
+  storageBucket: "fitcal-indonesia.firebasestorage.app",
+  messagingSenderId: "31707606721",
+  appId: "1:31707606721:web:43cfd60eaf3420365aae40"
 };
 
 const app = initializeApp(firebaseConfig);
