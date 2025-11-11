@@ -77,7 +77,7 @@ async function sendMessage() {
         const userPrompt = text + " sertakan juga referensi dari WHO dan Kemenkes jika perlu";
 
         // Kofigurasi URL dan API Key
-        const apiKey = "AIzaSyAvPbyPpedaM_3Ziyi43TYEQRc9PjlIcg4";
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
         const payload = {
@@ -143,7 +143,8 @@ async function sendMessage() {
                     @click="closePremiumModal"></button>
 
                 <div class="chat-modal-body">
-                    <h4 class="modal-title mb-4">Fitcal Chatbot AI</h4>
+                    <h4 class="modal-title">Fitcal Chatbot AI</h4>
+                    <i class="text-center mb-2">Model : Gemini 2.5 Flash</i>
 
                     <div class="chat-window" ref="chatWindow">
                         <div v-for="message in messages" :key="message.id"
@@ -159,6 +160,7 @@ async function sendMessage() {
                         </button>
                     </form>
 
+                    <i class="text-center text-secondary">AI tidak bisa menggantikan saran dokter dan bisa membuat kesalahan. Jadi, periksa kembali responnya</i>
 
                 </div>
             </div>
