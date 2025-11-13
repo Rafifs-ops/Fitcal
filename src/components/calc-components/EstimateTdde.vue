@@ -32,7 +32,6 @@ const extremeLoss = computed(() => tdee.value - 1000);
 const mildGain = computed(() => tdee.value + 250);
 const weightGain = computed(() => tdee.value + 500);
 const fastGain = computed(() => tdee.value + 1000);
-
 </script>
 
 <template>
@@ -81,8 +80,8 @@ const fastGain = computed(() => tdee.value + 1000);
 
     </div>
 
-    <div v-else class="text-center p-3 text-secondary">
-        <p class="mb-0">Silakan isi data diri Anda di atas dan klik "Hitung" untuk melihat hasil perkiraan TDDE.</p>
+    <div v-else class="text-center p-3">
+        <img src="../../assets/img/validasi-hasil-hitung-removebg-preview.png" alt="">
     </div>
 </template>
 

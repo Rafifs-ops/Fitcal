@@ -1,10 +1,13 @@
 <script setup>
-import { defineProps, ref, toRefs } from 'vue';
+import { defineProps, ref, toRefs, computed } from 'vue';
 import { db } from '@/firebase/config';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 const props = defineProps(["hasilHitung"]); // Menerima data hasil perhitungan dari komponen induk(PremCalc.vue)
 const { hasilHitung } = toRefs(props) // Menjaga reaktivitas data/variabel saat menggunakan destruk
+
+// Cek apakah perhitungan sudah dilakukan ?
+const hasCalculated = computed(() => hasilHitung.value.tdde > 0 && hasilHitung.value.bmi > 0 && hasilHitung.value.bmr > 0);
 
 const userId = localStorage.getItem("userId");
 
@@ -36,54 +39,60 @@ async function simpanHasil() {
 </script>
 
 <template>
-    <h2 class="section-title text-center mb-4">Hasil Perhitungan</h2>
-    <div class="row g-4">
+    <div v-if="hasCalculated">
+        <h2 class="section-title text-center mb-4">Hasil Perhitungan</h2>
+        <div class="row g-4">
 
-        <div class="col-md-4">
-            <div class="card result-card h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h5 class="result-title">BMI</h5>
-                    <p class="result-value display-5 fw-bold">{{ hasilHitung.bmi }}</p>
-                    <span class="badge result-badge-normal align-self-center">
-                        kg/m²
-                    </span>
+            <div class="col-md-4">
+                <div class="card result-card h-100">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h5 class="result-title">BMI</h5>
+                        <p class="result-value display-5 fw-bold">{{ hasilHitung.bmi }}</p>
+                        <span class="badge result-badge-normal align-self-center">
+                            kg/m²
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card result-card h-100">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h5 class="result-title">BMR</h5>
+                        <p class="result-value display-5 fw-bold">{{ hasilHitung.bmr }}</p>
+                        <span class="badge result-badge-info align-self-center">
+                            kkal/hari
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card result-card h-100">
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h5 class="result-title">TDEE</h5>
+                        <p class="result-value display-5 fw-bold">{{ hasilHitung.tdde }}</p>
+                        <span class="badge result-badge-info align-self-center">
+                            kkal/hari
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card result-card h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h5 class="result-title">BMR</h5>
-                    <p class="result-value display-5 fw-bold">{{ hasilHitung.bmr }}</p>
-                    <span class="badge result-badge-info align-self-center">
-                        kkal/hari
-                    </span>
-                </div>
-            </div>
-        </div>
+        <!--Tampilan tombol jika sedang tidak loading (user belum klik tombol)-->
+        <button v-if="!loading" type="button" class="btn btn-success mt-3" @click="simpanHasil">Simpan Hasil</button>
 
-        <div class="col-md-4">
-            <div class="card result-card h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h5 class="result-title">TDEE</h5>
-                    <p class="result-value display-5 fw-bold">{{ hasilHitung.tdde }}</p>
-                    <span class="badge result-badge-info align-self-center">
-                        kkal/hari
-                    </span>
-                </div>
-            </div>
-        </div>
+        <!--Tampilan loading jika user klik tombol simpan hasil-->
+        <button v-if="loading" class="btn btn-success mt-3" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            <span class="visually-hidden" role="status">Loading...</span>
+        </button>
     </div>
 
-    <!--Tampilan tombol jika sedang tidak loading (user belum klik tombol)-->
-    <button v-if="!loading" type="button" class="btn btn-success mt-3" @click="simpanHasil">Simpan Hasil</button>
-
-    <!--Tampilan loading jika user klik tombol simpan hasil-->
-    <button v-if="loading" class="btn btn-success mt-3" type="button" disabled>
-        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-        <span class="visually-hidden" role="status">Loading...</span>
-    </button>
+    <div v-else>
+        <p class="mb-0 text-center">Silakan isi data diri Anda di atas dan klik "Hitung" untuk melihat hasil perhitungan.</p>
+    </div>
 </template>
 
 <style scoped>
