@@ -2,6 +2,7 @@
 import InfoBMI from '@/components/calc-components/InfoBMI.vue';
 import HasilHitung from '@/components/calc-components/HasilHitung.vue';
 import HasilHitungPrem from '@/components/prem-calc-components/HasilHitungPrem.vue';
+import EstimateTdde from '@/components/calc-components/EstimateTdde.vue';
 import FyiRumus from '@/components/calc-components/FyiRumus.vue';
 import TblCtaPremium from '@/components/calc-components/TblCtaPremium.vue';
 import RiwayatHasil from '@/components/prem-calc-components/RiwayatHasil.vue';
@@ -152,6 +153,9 @@ function hitung() {
                                     <!--Mengirim data/variable hasilHitung melalui props ke komponen child-->
                                     <HasilHitungPrem v-if="statusPremium" :hasilHitung="hasilHitung" />
                                     <HasilHitung v-else :hasilHitung="hasilHitung" />
+
+                                    <!--Estimate TDDE-->
+                                    <EstimateTdde :hasilHitung="hasilHitung"/>
 
                                     <!--Informasi BMI-->
                                     <InfoBMI />
