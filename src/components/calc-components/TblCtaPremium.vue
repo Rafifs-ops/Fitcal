@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import { db } from '@/firebase/config'; // Impor db
 import { doc, updateDoc } from 'firebase/firestore'; // Impor firestore functions
-import { usePayment } from '@/stores/payment';
 
 // State untuk mengontrol tampilan modal
 const showPremiumModal = ref(false);
@@ -17,9 +16,6 @@ function openPremiumModal() {
 function closePremiumModal() {
     showPremiumModal.value = false;
 }
-
-const store = usePayment();
-const { createTransaction } = store;
 
 // Fungsi baru untuk menangani proses upgrade
 async function handleUpgrade() {
