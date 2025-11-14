@@ -7,7 +7,7 @@ export const usePayment = defineStore("payment", () => {
         isProduction: false, // Ganti ke 'true' saat production
         // Amankan Server Key menggunakan environment config Firebase
         // Jalankan: midtrans.server_key="SERVER_KEY_ANDA"
-        serverKey: "Mid-server-EZ9FlqvapS55gEqKN-W7u1DX",
+        serverKey: import.meta.env.VITE_MIDTRANS_SERVER_KEY,
     });
 
     const createTransaction = async function (req, res) {
