@@ -1,20 +1,17 @@
 import { defineStore } from "pinia";
-import midtransClient from "midtrans-client";
+import Midtrans from "midtrans-client";
 
 export const usePayment = defineStore("payment", () => {
     // Inisialisasi Snap dari midtrans-client
-    const snap = new midtransClient.Snap({
-        isProduction: false, // Ganti ke 'true' saat production
-        // Amankan Server Key menggunakan environment config Firebase
-        // Jalankan: midtrans.server_key="SERVER_KEY_ANDA"
-        serverKey: import.meta.env.SECRET,
+    const snap = new Midtrans.Snap({
+        isProduction: false,
+        serverKey: "masih-dummy",
     });
 
     const createTransaction = async function (req, res) {
 
         try {
-            // 1. Dapatkan detail pengguna (jika perlu, misal dari body req)
-            // Untuk contoh ini, kita hardcode harganya.
+            // 1. Dapatkan detail pengguna
             const price = 50000;
             const orderId = `FITCAL-PREMIUM-${Date.now()}`; // ID order unik
 
@@ -50,5 +47,5 @@ export const usePayment = defineStore("payment", () => {
         }
     }
 
-    return {createTransaction}
+    return { createTransaction }
 })
