@@ -5,7 +5,6 @@ export const usePayment = defineStore("payment", () => {
     // Inisialisasi Snap dari midtrans-client
     const snap = new Midtrans.Snap({
         isProduction: false,
-        serverKey: "masih-dummy",
     });
 
     const createTransaction = async function (req, res) {
