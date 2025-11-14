@@ -1,23 +1,22 @@
-// Muat environment variables dari file .env
-require('dotenv').config();
+// server.js (Versi ES Module)
 
-const express = require('express');
-const Midtrans = require('midtrans-client');
-const cors = require('cors');
+import 'dotenv/config'; // Muat environment variables
+import express from 'express';
+import Midtrans from 'midtrans-client';
+import cors from 'cors';
 
 const app = express();
 const port = 3000; // Port untuk server backend Anda
 
 // --- Middleware ---
-// Mengizinkan request dari frontend Vue Anda (misal: http://localhost:5173)
-app.use(cors({
-    origin: 'http://localhost:5173' // Sesuaikan dengan URL dev frontend Anda
-}));
-// Mem-parsing body JSON dari request
-app.use(express.json());
+// Sesuaikan dengan URL dev frontend Anda
+const corsOptions = {
+    origin: 'http://localhost:5173'
+};
+app.use(cors(corsOptions));
+app.use(express.json()); // Mem-parsing body JSON
 
 // --- Inisialisasi Midtrans Snap ---
-// Ambil key dari environment variables (file .env)
 const snap = new Midtrans.Snap({
     isProduction: false,
     serverKey: process.env.MIDTRANS_SERVER_KEY,
@@ -25,14 +24,12 @@ const snap = new Midtrans.Snap({
 });
 
 // --- Endpoint API ---
-// Ini adalah API yang akan dipanggil oleh frontend
 app.post('/api/create-transaction', async (req, res) => {
     try {
-        // Ambil data (username, email) yang dikirim oleh frontend
         const { username, email } = req.body;
 
         if (!username || !email) {
-            return res.status(400).send({ error: "Username and email are required" });
+            return res.status(400).json({ error: "Username and email are required" });
         }
 
         const price = 50000;
@@ -55,10 +52,8 @@ app.post('/api/create-transaction', async (req, res) => {
             },
         };
 
-        // Buat transaksi menggunakan SDK Midtrans
         const transaction = await snap.createTransaction(parameter);
 
-        // Kirim transaction token kembali ke frontend
         res.status(200).json({ token: transaction.token, order_id: orderId });
 
     } catch (error) {
