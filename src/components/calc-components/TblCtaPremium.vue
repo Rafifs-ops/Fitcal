@@ -1,8 +1,12 @@
 <script setup>
 import { ref } from 'vue';
+import { db } from '@/firebase/config'; // Impor db
+import { doc, updateDoc } from 'firebase/firestore'; // Impor firestore functions
+import { usePayment } from '@/stores/payment';
 
 // State untuk mengontrol tampilan modal
 const showPremiumModal = ref(false);
+const isLoading = ref(false); // State untuk loading
 
 // Fungsi untuk menampilkan modal saat tombol CTA diklik
 function openPremiumModal() {
@@ -12,6 +16,78 @@ function openPremiumModal() {
 // Fungsi untuk menutup modal
 function closePremiumModal() {
     showPremiumModal.value = false;
+}
+
+const store = usePayment();
+const { createTransaction } = store;
+
+// Fungsi baru untuk menangani proses upgrade
+async function handleUpgrade() {
+    isLoading.value = true;
+    try {
+        // 1. Panggil backend (Firebase Function) untuk membuat transaksi
+        const response = await fetch(createTransaction, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: localStorage.getItem("username"),
+                email: localStorage.getItem("email"),
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Gagal membuat transaksi');
+        }
+
+        const transactionData = await response.json();
+        const transactionToken = transactionData.token;
+
+        // 2. Panggil Midtrans Snap
+        window.snap.pay(transactionToken, {
+            onSuccess: async (result) => {
+                /* Pembayaran berhasil! */
+                console.log('Payment Success:', result);
+                alert('Pembayaran berhasil! Akun Anda telah di-upgrade.');
+
+                // 3. Update status user di Firestore
+                const userId = localStorage.getItem("userId");
+                if (userId) {
+                    const userDocRef = doc(db, 'users', userId);
+                    await updateDoc(userDocRef, {
+                        isPremium: true
+                    });
+                }
+
+                isLoading.value = false;
+                closePremiumModal();
+                window.location.reload(); // Muat ulang halaman untuk refresh status premium
+            },
+            onPending: (result) => {
+                /* Pembayaran pending */
+                console.log('Payment Pending:', result);
+                alert('Menunggu pembayaran Anda...');
+                isLoading.value = false;
+            },
+            onError: (result) => {
+                /* Pembayaran gagal */
+                console.error('Payment Error:', result);
+                alert('Pembayaran gagal. Silakan coba lagi.');
+                isLoading.value = false;
+            },
+            onClose: () => {
+                /* Popup ditutup tanpa transaksi */
+                alert('Anda menutup popup pembayaran.');
+                isLoading.value = false;
+            }
+        });
+
+    } catch (error) {
+        console.error('Error upgrading to premium:', error);
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+        isLoading.value = false;
+    }
 }
 </script>
 
@@ -34,9 +110,14 @@ function closePremiumModal() {
                     <i class="bi bi-star-fill premium-icon"></i>
                     <h4 class="premium-text mt-3">Akses Premium</h4>
                     <i class="premium-text">Rp 50.000,00 per Bulan</i>
-                    <p class="premium-subtext">Dapatkan akses premium untuk simpan hasil dan berbicara dengan chatbot AI</p>
-                    <button class="btn premium-cta-button mt-4">
-                        Upgrade Sekarang
+                    <p class="premium-subtext">Dapatkan akses premium untuk simpan hasil dan berbicara dengan chatbot AI
+                    </p>
+
+                    <button class="btn premium-cta-button mt-4" @click="handleUpgrade" :disabled="isLoading">
+                        <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status"
+                            aria-hidden="true"></span>
+                        <span v-if="isLoading"> Memproses...</span>
+                        <span v-else>Upgrade Sekarang</span>
                     </button>
                 </div>
             </div>
@@ -45,14 +126,12 @@ function closePremiumModal() {
 </template>
 
 <style scoped>
+/* CSS Anda yang sudah ada tetap di sini */
 .fixed-button-container {
     position: fixed;
     bottom: 2rem;
-    /* Jarak dari bawah viewport */
     left: 2rem;
-    /* Jarak dari kiri viewport */
     z-index: 1000;
-    /* Pastikan di atas elemen lain */
     display: flex;
     flex-direction: column;
 }
@@ -67,11 +146,11 @@ function closePremiumModal() {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1040; /* Di atas tombol fixed */
+    z-index: 1040;
 }
 
 .premium-modal-content {
-    background-color: #F8F8F8; /* Warna latar belakang modal, bisa disesuaikan */
+    background-color: #F8F8F8;
     padding: 2.5rem;
     border-radius: 1rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
@@ -87,26 +166,26 @@ function closePremiumModal() {
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: #1B4242; /* Dark Teal */
+    color: #1B4242;
 }
 
 .premium-icon {
     font-size: 3.5rem;
-    color: #092635; /* Dark Navy */
+    color: #092635;
 }
 
 .premium-text {
-    color: #092635; /* Dark Navy */
+    color: #092635;
     font-weight: 600;
 }
 
 .premium-subtext {
-    color: #1B4242; /* Dark Teal */
+    color: #1B4242;
     font-size: 1rem;
 }
 
 .premium-cta-button {
-    background-color: #5C8374; /* Medium Green */
+    background-color: #5C8374;
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -116,7 +195,14 @@ function closePremiumModal() {
 }
 
 .premium-cta-button:hover {
-    background-color: #1B4242; /* Dark Teal, untuk efek hover */
-    color: white; /* Pastikan warna teks tetap putih */
+    background-color: #1B4242;
+    color: white;
+}
+
+/* Style untuk tombol saat loading */
+.premium-cta-button:disabled {
+    background-color: #5C8374;
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 </style>
