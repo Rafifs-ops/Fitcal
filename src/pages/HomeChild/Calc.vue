@@ -53,37 +53,48 @@ const hasilHitung = ref({
 
 function hitung() {
 
-    // Hitung BMI, konversi tinggi badan cm ke m
-    const rumusBmi = inputData.value.beratBadan / ((inputData.value.tinggiBadan / 100) ** 2);
-    hasilHitung.value.bmi = rumusBmi.toFixed(1);
+    // Cek apakah input data sudah dilakukan ? output = boolean
+    const hasCalculated = inputData.value.beratBadan > 0 && inputData.value.tinggiBadan > 0 && inputData.value.usia > 0;
 
-    if (inputData.value.jenisKelamin === "Laki-laki") {
+    if (!hasCalculated) { // Jika hasCalculated bernilai false (Belum input data)
 
-        // Hitung BMR, rumus mifflin st jeor (Pria)
-        const rumusBmr = 5 + (10 * inputData.value.beratBadan) + (6.25 * inputData.value.tinggiBadan) - (5 * inputData.value.usia);
-        hasilHitung.value.bmr = rumusBmr.toFixed(1);
+        alert("Silahkan input data diri Anda terlebih dahulu....");
+        return;
 
-        // Hitung TDDE
-        const rumusTdde = rumusBmr * inputData.value.tingkatAktvitas;
-        hasilHitung.value.tdde = rumusTdde.toFixed(1);
+    } else { // Jika hasCalculated bernilai true (Sudah input data)
+
+        // Hitung BMI, konversi tinggi badan cm ke m
+        const rumusBmi = inputData.value.beratBadan / ((inputData.value.tinggiBadan / 100) ** 2);
+        hasilHitung.value.bmi = rumusBmi.toFixed(1);
+
+        if (inputData.value.jenisKelamin === "Laki-laki") {
+
+            // Hitung BMR, rumus mifflin st jeor (Pria)
+            const rumusBmr = 5 + (10 * inputData.value.beratBadan) + (6.25 * inputData.value.tinggiBadan) - (5 * inputData.value.usia);
+            hasilHitung.value.bmr = rumusBmr.toFixed(1);
+
+            // Hitung TDDE
+            const rumusTdde = rumusBmr * inputData.value.tingkatAktvitas;
+            hasilHitung.value.tdde = rumusTdde.toFixed(1);
 
 
-    } else if (inputData.value.jenisKelamin === "Perempuan") {
+        } else if (inputData.value.jenisKelamin === "Perempuan") {
 
-        // Hitung BMR, rumus mifflin st jeor (Wanita)
-        const rumusBmr = (10 * inputData.value.beratBadan) + (6.25 * inputData.value.tinggiBadan) - (5 * inputData.value.usia) - 161;
-        hasilHitung.value.bmr = rumusBmr.toFixed(1);
+            // Hitung BMR, rumus mifflin st jeor (Wanita)
+            const rumusBmr = (10 * inputData.value.beratBadan) + (6.25 * inputData.value.tinggiBadan) - (5 * inputData.value.usia) - 161;
+            hasilHitung.value.bmr = rumusBmr.toFixed(1);
 
-        // Hitung TDDE
-        const rumusTdde = rumusBmr * inputData.value.tingkatAktvitas;
-        hasilHitung.value.tdde = rumusTdde.toFixed(1);
-    }
+            // Hitung TDDE
+            const rumusTdde = rumusBmr * inputData.value.tingkatAktvitas;
+            hasilHitung.value.tdde = rumusTdde.toFixed(1);
+        }
 
-    // Scroll otomtis ke komponen child (kebawah) jika sudah selesai hitung
-    if (resultSection.value) {
-        resultSection.value.scrollIntoView({
-            behavior: 'smooth',
-        });
+        // Scroll otomtis ke komponen child (kebawah) jika sudah selesai hitung
+        if (resultSection.value) {
+            resultSection.value.scrollIntoView({
+                behavior: 'smooth',
+            });
+        }
     }
 }
 </script>
@@ -155,7 +166,7 @@ function hitung() {
                                     <HasilHitung v-else :hasilHitung="hasilHitung" />
 
                                     <!--Estimate TDDE-->
-                                    <EstimateTdde :hasilHitung="hasilHitung"/>
+                                    <EstimateTdde :hasilHitung="hasilHitung" />
 
                                     <!--Informasi BMI-->
                                     <InfoBMI />
