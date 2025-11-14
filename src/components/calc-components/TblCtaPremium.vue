@@ -19,14 +19,14 @@ function closePremiumModal() {
 }
 
 const store = usePayment();
-const { createTransaction } = store;
+const { createTransactionUrl } = store;
 
 // Fungsi baru untuk menangani proses upgrade
 async function handleUpgrade() {
     isLoading.value = true;
     try {
         // 1. Panggil backend (Firebase Function) untuk membuat transaksi
-        const response = await fetch(createTransaction, {
+        const response = await fetch(createTransactionUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
