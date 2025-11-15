@@ -52,7 +52,7 @@ const hasCalculated = computed(() => hasilHitung.value.tdde > 0 && hasilHitung.v
     </div>
 
     <div v-else>
-        <p class="mb-0 text-center">Silakan isi data diri Anda di atas dan klik "Hitung" untuk melihat hasil perhitungan.</p>
+        <p class="mb-0 text-center fw-bold">Silakan isi data diri Anda di atas dan klik "Hitung" untuk melihat hasil perhitungan.</p>
     </div>
 </template>
 

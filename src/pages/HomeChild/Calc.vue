@@ -11,9 +11,11 @@ import NotLoginYet from '@/components/NotLoginYet.vue';
 import { ref, onMounted, computed } from 'vue';
 import { useData } from '@/stores/state';
 import { storeToRefs } from 'pinia';
+import { useCalculator } from '@/composables/useCalculator';
 
 const resultSection = ref(null); // Mendapatkan section untuk target scroll otomatis
 const username = localStorage.getItem("username"); // Menampung data username dari localStorage
+const statusLogin = computed(() => localStorage.getItem("isLogin") === "true"); // Mendapatkan status login, output: boolean
 
 const data = useData(); // Mengakses state pinia
 const { users } = storeToRefs(data); // Mengakses variabel users dari state pinia melalui destruk dan menjaga reaktivitasnya
@@ -28,7 +30,6 @@ const user = computed(() => {
 }); // Isi user = objek yang berisi beberapa properti
 
 // Menggunakan computed agar nilai variable dapat berubah secara otomatis tergantung kondisi
-const statusLogin = computed(() => localStorage.getItem("isLogin") === "true"); // Mendapatkan status login, output: boolean
 const statusPremium = computed(() => {
     // Gunakan optional chaining (?.) untuk keamanan
     // Jika 'user.value' ada, ambil 'isPremium', jika tidak, anggap false.
@@ -44,57 +45,19 @@ const inputData = ref({
     tingkatAktvitas: 1.2,
 });
 
-// Tempat penyimpanan data hasil hitung kalkuator dan nilai default
-const hasilHitung = ref({
-    bmi: 0,
-    bmr: 0,
-    tdde: 0
-});
+// Mengakses composable untuk mendapatkan data hasil hitung dan fungsi hitung
+const { hasilHitung, hitung } = useCalculator();
+function handleSubmitHitung() { 
+    const success = hitung(inputData.value); // Panggil logika dari composable dan mengirim argument input data
 
-function hitung() {
-
-    // Cek apakah input data sudah dilakukan ? output = boolean
-    const hasCalculated = inputData.value.beratBadan > 0 && inputData.value.tinggiBadan > 0 && inputData.value.usia > 0;
-
-    if (!hasCalculated) { // Jika hasCalculated bernilai false (Belum input data)
-
+    if (!success) {
         alert("Silahkan input data diri Anda terlebih dahulu....");
         return;
+    }
 
-    } else { // Jika hasCalculated bernilai true (Sudah input data)
-
-        // Hitung BMI, konversi tinggi badan cm ke m
-        const rumusBmi = inputData.value.beratBadan / ((inputData.value.tinggiBadan / 100) ** 2);
-        hasilHitung.value.bmi = rumusBmi.toFixed(1);
-
-        if (inputData.value.jenisKelamin === "Laki-laki") {
-
-            // Hitung BMR, rumus mifflin st jeor (Pria)
-            const rumusBmr = 5 + (10 * inputData.value.beratBadan) + (6.25 * inputData.value.tinggiBadan) - (5 * inputData.value.usia);
-            hasilHitung.value.bmr = rumusBmr.toFixed(1);
-
-            // Hitung TDDE
-            const rumusTdde = rumusBmr * inputData.value.tingkatAktvitas;
-            hasilHitung.value.tdde = rumusTdde.toFixed(1);
-
-
-        } else if (inputData.value.jenisKelamin === "Perempuan") {
-
-            // Hitung BMR, rumus mifflin st jeor (Wanita)
-            const rumusBmr = (10 * inputData.value.beratBadan) + (6.25 * inputData.value.tinggiBadan) - (5 * inputData.value.usia) - 161;
-            hasilHitung.value.bmr = rumusBmr.toFixed(1);
-
-            // Hitung TDDE
-            const rumusTdde = rumusBmr * inputData.value.tingkatAktvitas;
-            hasilHitung.value.tdde = rumusTdde.toFixed(1);
-        }
-
-        // Scroll otomtis ke komponen child (kebawah) jika sudah selesai hitung
-        if (resultSection.value) {
-            resultSection.value.scrollIntoView({
-                behavior: 'smooth',
-            });
-        }
+    // Scroll otomatis
+    if (resultSection.value) {
+        resultSection.value.scrollIntoView({ behavior: 'smooth' });
     }
 }
 </script>
@@ -116,7 +79,7 @@ function hitung() {
                                 <div class="card-body p-4 p-md-5">
 
                                     <h2 class="section-title mb-4">Data Diri Anda</h2>
-                                    <form @submit.prevent="hitung">
+                                    <form @submit.prevent="handleSubmitHitung">
                                         <div class="row g-3 mb-3">
                                             <div class="col-md-6">
                                                 <p class="form-label">Jenis Kelamin Anda</p>
