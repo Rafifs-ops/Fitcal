@@ -11,7 +11,7 @@ const port = 3000; // Port untuk server backend Anda
 // --- Middleware ---
 // Sesuaikan dengan URL dev frontend Anda
 const corsOptions = {
-    origin: 'http://localhost:5173'
+    origin: ['http://localhost:5173', 'https://fitcal-indonesia.web.app']
 };
 app.use(cors(corsOptions));
 app.use(express.json()); // Mem-parsing body JSON
