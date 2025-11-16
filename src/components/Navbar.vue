@@ -1,8 +1,10 @@
 <script setup>
 import { RouterLink, useRouter } from 'vue-router';
 import { computed } from 'vue';
+import Profil from './Profil.vue';
 
 // Mendapatkan status login dari localStorage, output: boolean
+// Menggunakan computed agar nilai bisa berubah secara otomatis ketika ada perubahan
 const statusLogin = computed(() => localStorage.getItem("isLogin") === "true");
 
 const router = useRouter() // Mendapatkan fungsi router untuk pindah halaman
@@ -28,30 +30,47 @@ function logout() {
 
             <!--Links-->
             <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
-                <div class="navbar-nav ms-0 gap-5">
+                <div class="navbar-nav ms-0 gap-lg-5">
                     <RouterLink class="nav-link" to="/" active-class="active-link text-light">Main</RouterLink>
                     <RouterLink class="nav-link" to="/calc" active-class="active-link text-light">Calc</RouterLink>
                     <RouterLink class="nav-link" to="/food" active-class="active-link text-light">Food</RouterLink>
-                    <RouterLink class="nav-link" to="/excercise" active-class="active-link text-light">Exercise</RouterLink>
-                    <RouterLink class="nav-link" to="/product" active-class="active-link text-light">Product</RouterLink>
-                    
-                    <!--Login/Logout Responsive Ver-->
-                    <RouterLink v-if="!statusLogin" class="btn text-light fw-bold rounded-5 d-lg-none d-block"
-                        style="background-color: #1B4242;" to="/login">Login <i class="bi bi-arrow-right-circle"></i>
+                    <RouterLink class="nav-link" to="/excercise" active-class="active-link text-light">Exercise
                     </RouterLink>
-                    <RouterLink v-if="statusLogin" class="btn text-light fw-bold rounded-5 d-lg-none d-block"
-                        style="background-color: red;" to="/login" v-on:click="logout">Logout <i
-                            class="bi bi-arrow-right-circle"></i></RouterLink>
+                    <RouterLink class="nav-link" to="/product" active-class="active-link text-light">Product
+                    </RouterLink>
+
+                    <!--Profil dan Tombol Login/Logout Responsive Ver-->
+                    <div class="d-lg-none">
+                        <div v-if="statusLogin">
+                            <Profil />
+                            <RouterLink class="btn text-light fw-bold rounded-5 mt-2"
+                                style="background-color: red;" to="/login" v-on:click="logout">Logout <i
+                                    class="bi bi-arrow-right-circle"></i></RouterLink>
+                        </div>
+                        <div v-else>
+                            <RouterLink class="btn text-light fw-bold rounded-5"
+                                style="background-color: #1B4242;" to="/login">Login <i
+                                    class="bi bi-arrow-right-circle"></i>
+                            </RouterLink>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!--Login/Logout-->
-            <RouterLink v-if="!statusLogin" class="btn text-light fw-bold rounded-5 d-none d-lg-block"
-                style="background-color: #1B4242;" to="/login">Login <i class="bi bi-arrow-right-circle"></i>
-            </RouterLink>
-            <RouterLink v-if="statusLogin" class="btn text-light fw-bold rounded-5 d-none d-lg-block"
-                style="background-color: red;" to="/login" v-on:click="logout">Logout <i
-                    class="bi bi-arrow-right-circle"></i></RouterLink>
+            <!--Profil dan Tombol Login/Logout-->
+            <div class="d-none d-lg-flex">
+                <div v-if="statusLogin" class="d-flex gap-2">
+                    <Profil />
+                    <RouterLink class="btn text-light fw-bold rounded-5"
+                        style="background-color: red;" to="/login" v-on:click="logout">Logout <i
+                            class="bi bi-arrow-right-circle"></i></RouterLink>
+                </div>
+                <div v-else>
+                    <RouterLink class="btn text-light fw-bold rounded-5"
+                        style="background-color: #1B4242;" to="/login">Login <i class="bi bi-arrow-right-circle"></i>
+                    </RouterLink>
+                </div>
+            </div>
         </div>
     </nav>
 </template>
