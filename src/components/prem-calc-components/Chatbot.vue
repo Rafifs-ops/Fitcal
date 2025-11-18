@@ -78,7 +78,7 @@ async function sendMessage() {
 
         // Kofigurasi URL dan API Key
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
 
         const payload = {
             contents: [{
@@ -135,7 +135,7 @@ async function sendMessage() {
 <template>
     <main>
         <button class="btn btn-success btn-lg shadow-sm mb-2" @click="openPremiumModal">
-            Chatbot AI  <i class="bi bi-robot"></i> </button>
+            Chatbot AI <i class="bi bi-robot"></i> </button>
 
         <div v-if="showPremiumModal" class="premium-modal-backdrop" @click.self="closePremiumModal">
             <div class="premium-modal-content">
@@ -144,7 +144,7 @@ async function sendMessage() {
 
                 <div class="chat-modal-body">
                     <h4 class="modal-title">Fitcal Chatbot AI</h4>
-                    <i class="text-center mb-2">Model : Gemini 2.5 Flash</i>
+                    <i class="text-center mb-2">Model : Gemini 1.5 Pro</i>
 
                     <div class="chat-window" ref="chatWindow">
                         <div v-for="message in messages" :key="message.id"
@@ -160,7 +160,8 @@ async function sendMessage() {
                         </button>
                     </form>
 
-                    <i class="text-center text-secondary">AI tidak bisa menggantikan saran dokter dan bisa membuat kesalahan. Jadi, periksa kembali responnya</i>
+                    <i class="text-center text-secondary">AI tidak bisa menggantikan saran dokter dan bisa membuat
+                        kesalahan. Jadi, periksa kembali responnya</i>
 
                 </div>
             </div>
