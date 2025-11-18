@@ -78,7 +78,7 @@ async function sendMessage() {
 
         // Kofigurasi URL dan API Key
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${apiKey}`;
 
         const payload = {
             contents: [{
@@ -144,7 +144,7 @@ async function sendMessage() {
 
                 <div class="chat-modal-body">
                     <h4 class="modal-title">Fitcal Chatbot AI</h4>
-                    <i class="text-center mb-2">Model : Gemini 1.5 Pro</i>
+                    <i class="text-center mb-2">Model : Gemini 2.5 Pro</i>
 
                     <div class="chat-window" ref="chatWindow">
                         <div v-for="message in messages" :key="message.id"
