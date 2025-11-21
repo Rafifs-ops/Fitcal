@@ -1,12 +1,13 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 // Data profil 
 const userProfile = ref({
     id: localStorage.getItem("userId"),
     username: localStorage.getItem("username"),
     email: localStorage.getItem("email"),
-    gender: localStorage.getItem("gender")
+    gender: localStorage.getItem("gender"),
+    statusPremium: computed(() => localStorage.getItem("isPremium") === "true")
 });
 </script>
 
@@ -34,6 +35,11 @@ const userProfile = ref({
             <div class="profile-item">
                 <strong>Jenis Kelamin</strong>
                 <span>{{ userProfile.gender }}</span>
+            </div>
+            <div class="profile-item">
+                <strong>Status</strong>
+                <span v-if="userProfile.statusPremium">Premium</span>
+                <span v-else>Not Premium</span>
             </div>
         </div>
     </div>

@@ -8,33 +8,12 @@ import TblCtaPremium from '@/components/calc-components/TblCtaPremium.vue';
 import RiwayatHasil from '@/components/prem-calc-components/RiwayatHasil.vue';
 import Chatbot from '@/components/prem-calc-components/Chatbot.vue';
 import NotLoginYet from '@/components/NotLoginYet.vue';
-import { ref, onMounted, computed } from 'vue';
-import { useData } from '@/stores/state';
-import { storeToRefs } from 'pinia';
+import { ref, computed } from 'vue';
 import { useCalculator } from '@/composables/useCalculator';
 
 const resultSection = ref(null); // Mendapatkan section untuk target scroll otomatis
-const username = localStorage.getItem("username"); // Menampung data username dari localStorage
 const statusLogin = computed(() => localStorage.getItem("isLogin") === "true"); // Mendapatkan status login, output: boolean
-
-const data = useData(); // Mengakses state pinia
-const { users } = storeToRefs(data); // Mengakses variabel users dari state pinia melalui destruk dan menjaga reaktivitasnya
-onMounted(async () => {
-    await data.fetchUsers(); // Menjalankan fungsi untuk mendapatkan data
-})
-
-// Menyimpan data user dari users yang sesuai username yang didapat
-const user = computed(() => {
-    return users.value.find((u) => u.username === username);
-    // Mencari data user yang sesuai dengan username yang didapat lalu menyimpannya didalam variabel tsb
-}); // Isi user = objek yang berisi beberapa properti
-
-// Menggunakan computed agar nilai variable dapat berubah secara otomatis tergantung kondisi
-const statusPremium = computed(() => {
-    // Gunakan optional chaining (?.) untuk keamanan
-    // Jika 'user.value' ada, ambil 'isPremium', jika tidak, anggap false.
-    return user.value?.isPremium === true;
-});
+const statusPremium = computed(() => localStorage.getItem("isPremium") === "true"); // Menggunakan computed agar variable memiliki nilai boolean
 
 // Tempat penyimpanan input data dari user dan nilai default
 const inputData = ref({
