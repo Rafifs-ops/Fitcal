@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia';
 import { db } from '@/firebase/config';
+import { doc, getDoc, updateDoc } from 'firebase/firestore'; 
+import { useData } from './state';
 
 export const useValidatePrem = defineStore("validatePrem", () => {
+    const dataStore = useData(); // Akses store data
+
     // --- Validasi Status Premium ---
     async function validatePremiumStatus(userId) {
         if (!userId) return;
@@ -28,7 +32,10 @@ export const useValidatePrem = defineStore("validatePrem", () => {
                         console.log("Masa aktif premium berakhir. Status diperbarui.");
 
                         // Refresh data users lokal agar UI update
-                        await fetchUsers();
+                        await dataStore.fetchUsers(); 
+                        
+                        // Update juga localStorage agar sinkron tanpa reload
+                        localStorage.setItem("isPremium", false);
                     }
                 }
             }
@@ -37,5 +44,5 @@ export const useValidatePrem = defineStore("validatePrem", () => {
         }
     }
 
-    return validatePremiumStatus
+    return { validatePremiumStatus };
 })

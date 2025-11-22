@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { db } from '@/firebase/config'; // Impor db
-import { doc, updateDoc } from 'firebase/firestore'; // Impor firestore functions
+import { doc, updateDoc, Timestamp } from 'firebase/firestore';
 import { usePayment } from '@/stores/payment';
 
 // State untuk mengontrol tampilan modal
