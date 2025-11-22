@@ -16,7 +16,7 @@ export const useData = defineStore('data', () => {
     try {
       const res = await getDocs(collection(db, collectionName));
       varTampung.value = res.docs.map(doc => ({ // doc adalah nilai satu per satu dari docs 
-        id: doc.id, 
+        id: doc.id,
         ...doc.data()
       }));
     } catch (e) {

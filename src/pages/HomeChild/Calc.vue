@@ -8,12 +8,26 @@ import TblCtaPremium from '@/components/calc-components/TblCtaPremium.vue';
 import RiwayatHasil from '@/components/prem-calc-components/RiwayatHasil.vue';
 import Chatbot from '@/components/prem-calc-components/Chatbot.vue';
 import NotLoginYet from '@/components/NotLoginYet.vue';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useCalculator } from '@/composables/useCalculator';
+import { useValidatePrem } from '@/stores/validasiStatusPrem';
+import { useData } from '@/stores/state';
 
 const resultSection = ref(null); // Mendapatkan section untuk target scroll otomatis
 const statusLogin = computed(() => localStorage.getItem("isLogin") === "true"); // Mendapatkan status login, output: boolean
 const statusPremium = computed(() => localStorage.getItem("isPremium") === "true"); // Menggunakan computed agar variable memiliki nilai boolean
+const data = useData();
+const validasiPremium = useValidatePrem(); // Mendapatkan fungsi dari pinia validasi status premium
+
+// --- Validasi masa aktif fitur premium saat halaman dimuat ---
+onMounted(async () => {
+    await data.fetchUsers();
+    const currentUserId = localStorage.getItem("userId");
+    if (currentUserId) {
+        await validasiPremium.validatePremiumStatus(currentUserId);
+    }
+})
+// --- Akhir validasi masa aktif fitur premium saat halaman dimuat ---
 
 // Tempat penyimpanan input data dari user dan nilai default
 const inputData = ref({
@@ -26,7 +40,7 @@ const inputData = ref({
 
 // Mengakses composable untuk mendapatkan data hasil hitung dan fungsi hitung
 const { hasilHitung, hitung } = useCalculator();
-function handleSubmitHitung() { 
+function handleSubmitHitung() {
     const success = hitung(inputData.value); // Panggil logika dari composable dan mengirim argument input data
 
     if (!success) {

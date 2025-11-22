@@ -25,7 +25,7 @@ const { createTransactionUrl } = store;
 async function handleUpgrade() {
     isLoading.value = true;
     try {
-        // 1. Panggil backend (Firebase Function) untuk membuat transaksi
+        // 1. Panggil backend untuk membuat transaksi
         const response = await fetch(createTransactionUrl, {
             method: 'POST',
             headers: {
@@ -55,8 +55,14 @@ async function handleUpgrade() {
                 const userId = localStorage.getItem("userId");
                 if (userId) {
                     const userDocRef = doc(db, 'users', userId);
+
+                    // --- MENENTUKAN EXPIRE DARI FITUR PREMIUM ---
+                    const now = new Date();
+                    const expiryDate = new Date(now.setDate(now.getDate() + 30)); // Menambahkan 30 hari dari hari ini
+
                     await updateDoc(userDocRef, {
-                        isPremium: true
+                        isPremium: true,
+                        premiumExpiresAt: Timestamp.fromDate(expiryDate) // Simpan tanggal kedaluwarsa ke Firestore
                     });
                 }
 
