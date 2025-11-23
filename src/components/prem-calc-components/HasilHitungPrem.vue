@@ -6,16 +6,17 @@ import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 const props = defineProps(["hasilHitung"]); // Menerima data hasil perhitungan dari komponen induk(PremCalc.vue)
 const { hasilHitung } = toRefs(props) // Menjaga reaktivitas data/variabel saat menggunakan destruk
 
-// Cek apakah perhitungan sudah dilakukan ?
+// Cek apakah perhitungan sudah dilakukan ? output = Boolean
 const hasCalculated = computed(() => hasilHitung.value.tdde > 0 && hasilHitung.value.bmi > 0 && hasilHitung.value.bmr > 0);
 
 const userId = localStorage.getItem("userId");
 
-const loading = ref(false);
+const loading = ref(false); // State/nilai default untuk loading
+
 async function simpanHasil() {
     try {
         loading.value = true // Menampilkan tampilan loading
-        const docRef = doc(db, 'users', userId);
+        const docRef = doc(db, 'users', userId); // Konfigurasi untuk mendapatkan salah satu dokumen di db firebase
         const newResult = {
             hasilBmi: hasilHitung.value.bmi, // Gunakan .value untuk mengakses data dari toRefs
             hasilBmr: hasilHitung.value.bmr,

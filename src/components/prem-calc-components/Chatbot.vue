@@ -12,8 +12,8 @@ const showPremiumModal = ref(false); // State untuk mengontrol tampilan modal
 function openPremiumModal() { // Fungsi untuk menampilkan modal saat tombol CTA diklik
     showPremiumModal.value = true;
     // Tambahkan pesan selamat datang dari AI saat modal dibuka (jika belum ada pesan)
-    if (messages.value.length === 0) {
-        messages.value.push({
+    if (messages.value.length === 0) { // Jika array messages kosong
+        messages.value.push({ // Tambahkan pesan (nilai array) berikut
             text: 'Halo! Ada yang bisa saya bantu hari ini?',
             sender: 'ai'
         });
@@ -27,7 +27,7 @@ function closePremiumModal() { // Fungsi untuk menutup modal
 // --- CHATBOT ---
 const messages = ref([]); // Menyimpan semua pesan AI dan user
 const newMessage = ref(''); // Text baru dari input
-const chatWindow = ref(null); // Referensi ke elemen jendela chat untuk auto-scroll
+const chatWindow = ref(null); // State ke elemen jendela chat untuk auto-scroll
 
 // Fungsi untuk auto-scroll ke pesan terbaru
 async function scrollToBottom() {
@@ -41,72 +41,71 @@ async function scrollToBottom() {
 // Fungsi untuk mengirim pesan ke Chatbot
 async function sendMessage() {
 
-    const text = newMessage.value.trim();
+    const text = newMessage.value.trim(); // Menghapus spasi (spasi, tab, baris baru) dari awal dan akhir string, tetapi tidak akan memengaruhi spasi di dalam string
     if (text === '') return; // Jangan kirim pesan kosong
 
     // 1. Tambahkan pesan pengguna
     messages.value.push({
         text: text,
-        sender: 'user'
+        role: 'user'
     });
 
-    // 2. Kosongkan input
+    // 2. Kosongkan input text pesan
     newMessage.value = '';
     scrollToBottom(); // Scroll setelah pesan pengguna ditambahkan
 
-    // 3. (BARU) Tambahkan pesan loading
+    // 3. Tambahkan pesan loading
     messages.value.push({
         text: 'AI sedang mengetik...', // Teks loading
-        sender: 'ai'
+        role: 'ai',
+        isLoading: true // Untuk menandai ini loading
     });
     await scrollToBottom(); // Scroll untuk menunjukkan loading
 
     // 4. Proses mengirim pesan ke gemini
     try {
         // Siapkan prompt untuk Gemini
-        const systemPrompt = `Anda adalah asisten chatbot dari website Fitcal. Anda ahli dalam BMI, BMR, dan TDDE. dan ini adalah data-data user saya:
-        Jenis Kelamin = ${inputData.value.jenisKelamin},
-        Usia = ${inputData.value.usia},
-        Berat Badan = ${inputData.value.beratBadan},
-        Tinggi Badan = ${inputData.value.tinggiBadan},
-        Tingkat Aktivitas = ${inputData.value.tingkatAktvitas},
-        BMI = ${hasilHitung.value.bmi}, 
-        BMR = ${hasilHitung.value.bmr}, dan 
-        TDEE = ${hasilHitung.value.tdde}
-        Selalu format jawaban Anda menggunakan Markdown agar rapi. Berikan baris baru (paragraf) untuk memisahkan ide agar mudah dibaca dan jangan beri **bold**`;
-        const userPrompt = text + " sertakan juga referensi dari WHO dan Kemenkes jika perlu";
+        const systemPrompt = `Anda adalah asisten kesehatan Fitcal. Data user:
+        Gender: ${inputData.value.jenisKelamin}, Usia: ${inputData.value.usia}, BB: ${inputData.value.beratBadan}, TB: ${inputData.value.tinggiBadan}, Aktivitas: ${inputData.value.tingkatAktvitas}.
+        Hasil: BMI ${hasilHitung.value.bmi}, BMR ${hasilHitung.value.bmr}, TDEE ${hasilHitung.value.tdde}.
+        Jawablah dengan ramah, singkat, dan jelas. Gunakan format poin-poin jika perlu. Jika data-data user kosong, maka ingatkan lah user untuk mengisi data diri untuk input kalkuator
+        Berikan baris baru (paragraf) untuk memisahkan ide agar mudah dibaca dan jangan beri **bold**.  Sertakan juga referensi dari WHO dan Kemenkes jika perlu `;
 
         // Kofigurasi URL dan API Key
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${apiKey}`;
 
+        // --- Siapkan History Chat (Seluruh isi chat AI dengan user) ---
+        // isi historyContent adalah array(objek)
+        const historyContent = messages.value  // Ambil history pesan (seluruh pesan) yang ada di array messages untuk dikirim ke AI
+            .filter(msg => !msg.isLoading) // Filter pesan loading agar tidak ikut terkirim
+            .map(msg => ({
+                role: msg.role === 'user' ? 'user' : 'model', // role dan parts adalah objek yang dibuat sesuai standar google AI Studio
+                parts: [{ text: msg.text }] // isi properti parts adalah array(objek)
+            })); // Menghasilkan array baru(historyContent) yang awalnya merupakan array message yang telah dimodifikasi sesuai kebutuhan
+
+        // Proses memuat prompt (Membungkus prompt) dengan konfigurasi dari google AI Studio untuk dikirim ke AI
         const payload = {
-            contents: [{
-                parts: [{
-                    text: userPrompt
-                }]
-            }],
+            contents: historyContent, // Mengirim seluruh riwayat chat
             systemInstruction: {
-                parts: [{
-                    text: systemPrompt
-                }]
-            },
+                parts: [{ text: systemPrompt }]
+            }
         };
 
+        // Proses mengirim pesan/prompt ke AI
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload) // Berisi prompt yang dibuat
         });
 
-        if (!response.ok) {
-            throw new Error(`API error: ${response.statusText}`);
-        }
+        // Jika proses gagal, maka akan melempar pesan error
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
 
-        const result = await response.json();
-        const responText = result.candidates[0].content.parts[0].text;
+        const result = await response.json(); // Menyimpan respon AI di variabel ini
+        const responText = result.candidates[0].content.parts[0].text; // Mengakses text dari respon AI
 
         // Hapus pesan loading
         messages.value.pop();
@@ -114,7 +113,7 @@ async function sendMessage() {
         // 5. Memberikan respon AI
         messages.value.push({
             text: responText,
-            sender: 'ai'
+            role: 'ai'
         });
 
     } catch (error) {
@@ -124,7 +123,7 @@ async function sendMessage() {
         // Tampilkan pesan error ke pengguna di dalam chat
         messages.value.push({
             text: 'Maaf, terjadi kesalahan saat mencoba terhubung. Silakan coba lagi.',
-            sender: 'ai'
+            role: 'ai'
         });
         scrollToBottom(); // Pastikan scroll ke pesan error
     }
@@ -148,7 +147,7 @@ async function sendMessage() {
 
                     <div class="chat-window" ref="chatWindow">
                         <div v-for="message in messages" :key="message.id"
-                            :class="['chat-message', message.sender === 'user' ? 'user-message' : 'ai-message']">
+                            :class="['chat-message', message.role === 'user' ? 'user-message' : 'ai-message']">
                             {{ message.text }}
                         </div>
                     </div>

@@ -25,15 +25,17 @@ export const useData = defineStore('data', () => {
     }
   }
 
-  // Panggil fungsi generik
+  // Mendapatkan data users
   async function fetchUsers() {
     await fetchCollection("users", users);
   }
 
+  // Mendapatkan data articles
   async function fetchArticles() {
     await fetchCollection("articles", articles);
   }
 
+  // Mendapatkan data products
   async function fetchProducts() {
     await fetchCollection("products", products);
   }

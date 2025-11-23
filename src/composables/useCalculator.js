@@ -49,5 +49,5 @@ export function useCalculator() {
     return {
         hasilHitung,
         hitung
-    };
+    }; // Return fungsi dan variabel agar dapat digunakan di manapun
 }

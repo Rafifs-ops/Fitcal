@@ -11,6 +11,7 @@ function openPremiumModal() { // Fungsi untuk menampilkan modal saat tombol CTA 
 function closePremiumModal() {  // Fungsi untuk menutup modal
     showPremiumModal.value = false;
 }
+// AKHIR KONFIGURASI TAMPILAN UI MODAL
 
 const userId = localStorage.getItem("userId"); // Mendapatkan data user id dari localStorage
 

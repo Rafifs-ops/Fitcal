@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 
-// Data untuk "10 Pesan Gizi Seimbang" (Tidak ada perubahan)
+// Data untuk "10 Pesan Gizi Seimbang"
 const pesanGizi = ref([
     "<strong>Syukuri dan nikmati</strong> anekaragam makanan.",
     "<strong>Banyak makan sayuran</strong> dan cukup buah-buahan.",

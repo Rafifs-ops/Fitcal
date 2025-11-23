@@ -22,7 +22,7 @@ const tdee = computed(() => Math.round(parseFloat(props.hasilHitung.tdde)));
 const hasCalculated = computed(() => tdee.value > 0);
 
 // --- Target Kalori ---
-// Dihitung berdasarkan TDEE, mirip dengan screenshot Anda.
+// Dihitung berdasarkan TDEE
 // (0.25kg/minggu ≈ 250 kalori/hari, 0.5kg/minggu ≈ 500 kalori/hari, 1kg/minggu ≈ 1000 kalori/hari)
 
 const mildLoss = computed(() => tdee.value - 250);

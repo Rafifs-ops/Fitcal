@@ -43,9 +43,9 @@ const { hasilHitung, hitung } = useCalculator();
 function handleSubmitHitung() {
     const success = hitung(inputData.value); // Panggil logika dari composable dan mengirim argument input data
 
-    if (!success) {
+    if (!success) { // Jika fungsi hitung mengembalikan nilai false
         alert("Silahkan input data diri Anda terlebih dahulu....");
-        return;
+        return; // Menghentikan eksekusi program
     }
 
     // Scroll otomatis

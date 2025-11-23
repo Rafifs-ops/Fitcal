@@ -4,6 +4,7 @@ import { db } from '@/firebase/config'; // Impor db
 import { doc, updateDoc, Timestamp } from 'firebase/firestore';
 import { usePayment } from '@/stores/payment';
 
+// ----- KONFIGURASI UI MODAL -----
 // State untuk mengontrol tampilan modal
 const showPremiumModal = ref(false);
 const isLoading = ref(false); // State untuk loading
@@ -17,7 +18,10 @@ function openPremiumModal() {
 function closePremiumModal() {
     showPremiumModal.value = false;
 }
+// ----- AKHIR KONFIGURASI UI MODAL -----
 
+
+// ----- PAYMENT GATEWAY ----
 const store = usePayment();
 const { createTransactionUrl } = store;
 
@@ -95,6 +99,7 @@ async function handleUpgrade() {
         isLoading.value = false;
     }
 }
+// ----- AKHIR PAYMENT GATEWAY ----
 </script>
 
 <template>

@@ -6,10 +6,10 @@ import NotLoginYet from '@/components/NotLoginYet.vue';
 
 const statusLogin = computed(() => localStorage.getItem("isLogin") === "true"); // Mendapatkan status login, output: boolean;
 
-const data = useData();
-const { products } = storeToRefs(data);
+const data = useData(); // Mendapatkan state data dari pinia
+const { products } = storeToRefs(data); // Mendapatkan data products dari state pinia
 onMounted(async () => {
-    await data.fetchProducts();
+    await data.fetchProducts(); // Pada saat DOM diload, maka akan menjalankan fungsi fetchProducts(Mendapatkan data products)
 })
 
 // Fungsi ini akan otomatis menambahkan "Rp" dan memformat angkanya

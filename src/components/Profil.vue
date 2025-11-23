@@ -7,7 +7,7 @@ const userProfile = ref({
     username: localStorage.getItem("username"),
     email: localStorage.getItem("email"),
     gender: localStorage.getItem("gender"),
-    statusPremium: computed(() => localStorage.getItem("isPremium") === "true")
+    statusPremium: computed(() => localStorage.getItem("isPremium") === "true") // Menggunakan computed agar tipe datanya menjadil boolean
 });
 </script>
 
