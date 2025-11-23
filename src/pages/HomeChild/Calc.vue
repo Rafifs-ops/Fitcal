@@ -8,7 +8,7 @@ import TblCtaPremium from '@/components/calc-components/TblCtaPremium.vue';
 import RiwayatHasil from '@/components/prem-calc-components/RiwayatHasil.vue';
 import Chatbot from '@/components/prem-calc-components/Chatbot.vue';
 import NotLoginYet from '@/components/NotLoginYet.vue';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useCalculator } from '@/composables/useCalculator';
 import { useValidatePrem } from '@/stores/validasiStatusPrem';
 import { useData } from '@/stores/state';
@@ -53,6 +53,35 @@ function handleSubmitHitung() {
         resultSection.value.scrollIntoView({ behavior: 'smooth' });
     }
 }
+
+// --- PROSES SAVE HASIL DAN INPUT PERHITUNGAN DI LOCALSTORAGE ---
+
+// 1. LOAD: Saat halaman baru dibuka/refresh, ambil data dari penyimpanan
+onMounted(() => {
+    const savedInput = localStorage.getItem('fitcal_input');
+    const savedHasil = localStorage.getItem('fitcal_hasil');
+
+    if (savedInput) {
+        // Parse JSON kembali menjadi object
+        inputData.value = JSON.parse(savedInput);
+    }
+
+    if (savedHasil) {
+        hasilHitung.value = JSON.parse(savedHasil);
+    }
+});
+
+// 2. SAVE: Setiap kali data input berubah, simpan ke penyimpanan
+watch(inputData, (newVal) => {
+    localStorage.setItem('fitcal_input', JSON.stringify(newVal));
+}, { deep: true }); // 'deep: true' agar bisa mendeteksi perubahan di dalam object
+
+// 3. SAVE: Setiap kali hasil hitung berubah, simpan juga
+watch(hasilHitung, (newVal) => {
+    localStorage.setItem('fitcal_hasil', JSON.stringify(newVal));
+}, { deep: true });
+
+// --- AKHIR PROSES SAVE HASIL DAN INPUT PERHITUNGAN DI LOCALSTORAGE ---
 </script>
 
 <template>

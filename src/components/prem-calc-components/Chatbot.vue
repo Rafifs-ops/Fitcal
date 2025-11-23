@@ -3,7 +3,22 @@ import { ref, nextTick } from 'vue';
 import { defineProps, toRefs } from 'vue';
 
 // --- MENERIMA DATA HASIL HITUNG KALKUATOR MELALUI PROPS ---
-const props = defineProps(["hasilHitung", "inputData"]); // Menerima data hasil perhitungan dan input data dari komponen induk(PremCalc.vue)
+const props = defineProps({ // Menerima data hasil perhitungan dan input data dari komponen induk
+    hasilHitung: {
+        type: Object,
+        default: () => ({ bmi: 0, bmr: 0, tdde: 0 }) // Nilai default(cadangan) agar tidak error saat direfresh
+    },
+    inputData: {
+        type: Object,
+        default: () => ({
+            jenisKelamin: localStorage.getItem("gender"),
+            usia: 0,
+            beratBadan: 0,
+            tinggiBadan: 0,
+            tingkatAktvitas: 1.2
+        })
+    }
+});
 const { hasilHitung, inputData } = toRefs(props) // Menjaga reaktivitas data/variabel saat menggunakan destruk
 // --- AKHIR MENERIMA DATA HASIL HITUNG KALKUATOR MELALUI PROPS ---
 

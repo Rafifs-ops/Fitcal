@@ -21,12 +21,15 @@ onMounted(async () => {
     await data.fetchUsers(); // Menjalankan fungsi untuk mendapatkan data
 })
 
-// Menggunakan computed agar nilai variable dapat berubah secara otomatis tergantung kondisi
-const user = computed(() => { 
+// Menggunakan computed agar nilai variable dapat berubah secara otomatis tergantung kondisi (up-to-date)
+const user = computed(() => {
     return users.value.find((u) => u.id === userId); // Mendapatkan data user yang sesuai dengan id yang ada dan menyimpannnya
     // Tipe data: objek
 })
-const savedResults = user.value.historyResults; // Mendapatkan array historyResults dari variable user
+const savedResults = computed(() => { // Mendapatkan array historyResults dari variable user
+    // Gunakan Optional Chaining (?.) agar tidak error jika user.value masih null/undefined
+    return user.value?.historyResults || [];
+});
 </script>
 
 <template>
