@@ -81,7 +81,7 @@ const fastGain = computed(() => tdee.value + 1000);
     </div>
 
     <div v-else class="text-center p-3">
-        <img src="../../assets/img/validasi-hasil-hitung-removebg-preview.png" alt="">
+        <img src="../../assets/img/validasi-hasil-hitung-removebg-preview.png" alt="" class="img-fluid">
     </div>
 </template>
 
