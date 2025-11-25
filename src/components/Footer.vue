@@ -59,16 +59,14 @@ const socialMedia = ref([
             <div class="footer-column location-section">
                 <h3>Location</h3>
                 <address>
-                    FitCal Headquarters<br>
-                    Level 12, Aurora Tower<br>
-                    Jl. Gatot Subroto No. 89,<br>
-                    Kuningan, Jakarta<br>
-                    Selatan 12950<br>
+                    Jl. Kramat Kosambi 1 no 20A,<br>
+                    Rawamangun, Jakarta<br>
+                    Timur 13240<br>
                     Indonesia
                 </address>
                 <p class="contact-info">
-                    <strong>Telepon:</strong> +62 21 555 8790<br>
-                    <strong>Email:</strong> Contact@Fitcal.Id
+                    <strong>Telepon:</strong> +62 895 3831 51668<br>
+                    <strong>Email:</strong> rafifebrians150206@gmail.com
                 </p>
             </div>
 
