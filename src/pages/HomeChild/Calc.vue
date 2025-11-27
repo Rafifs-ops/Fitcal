@@ -12,10 +12,17 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useCalculator } from '@/composables/useCalculator';
 import { useValidatePrem } from '@/stores/validasiStatusPrem';
 import { useData } from '@/stores/state';
+import { usePremium } from '@/stores/isPremium';
+import { storeToRefs } from 'pinia';
+
+// Proses pengambilan statusPremium
+const takePremiumStatus = usePremium();
+onMounted(() => {takePremiumStatus.fetchPremium(localStorage.getItem("userId"))})
+const { statusPremium } = storeToRefs(takePremiumStatus);
+const isPremium = computed(() => { return statusPremium.value === true }); // Menggunakan computed agar variable memiliki nilai boolean
 
 const resultSection = ref(null); // Mendapatkan section untuk target scroll otomatis
 const statusLogin = computed(() => localStorage.getItem("isLogin") === "true"); // Mendapatkan status login, output: boolean
-const statusPremium = computed(() => localStorage.getItem("isPremium") === "true"); // Menggunakan computed agar variable memiliki nilai boolean
 const data = useData();
 const validasiPremium = useValidatePrem(); // Mendapatkan fungsi dari pinia validasi status premium
 
@@ -147,7 +154,7 @@ watch(hasilHitung, (newVal) => {
 
                                     <!--Hasil Pehitungan-->
                                     <!--Mengirim data/variable hasilHitung melalui props ke komponen child-->
-                                    <HasilHitungPrem v-if="statusPremium" :hasilHitung="hasilHitung" />
+                                    <HasilHitungPrem v-if="isPremium" :hasilHitung="hasilHitung" />
                                     <HasilHitung v-else :hasilHitung="hasilHitung" />
 
                                     <!--Estimate TDDE-->
@@ -166,9 +173,9 @@ watch(hasilHitung, (newVal) => {
                 </div>
 
                 <div class="fixed-button-container">
-                    <TblCtaPremium v-if="!statusPremium" />
-                    <RiwayatHasil v-if="statusPremium" />
-                    <Chatbot v-if="statusPremium" :hasilHitung="hasilHitung" :inputData="inputData" />
+                    <TblCtaPremium v-if="!isPremium" />
+                    <RiwayatHasil v-if="isPremium" />
+                    <Chatbot v-if="isPremium" :hasilHitung="hasilHitung" :inputData="inputData" />
                 </div>
             </div>
         </div>

@@ -1,14 +1,22 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { usePremium } from '@/stores/isPremium';
+import { storeToRefs } from 'pinia';
+
+// Proses pengambilan statusPremium
+const takePremiumStatus = usePremium();
+onMounted(() => {takePremiumStatus.fetchPremium(localStorage.getItem("userId"))})
+const { statusPremium } = storeToRefs(takePremiumStatus);
 
 // Data profil 
 const userProfile = ref({
     id: localStorage.getItem("userId"),
     username: localStorage.getItem("username"),
     email: localStorage.getItem("email"),
-    gender: localStorage.getItem("gender"),
-    statusPremium: computed(() => localStorage.getItem("isPremium") === "true") // Menggunakan computed agar tipe datanya menjadil boolean
+    gender: localStorage.getItem("gender") 
 });
+
+const isPremium = computed(() => { return statusPremium.value === true });
 </script>
 
 <template>
@@ -38,7 +46,7 @@ const userProfile = ref({
             </div>
             <div class="profile-item">
                 <strong>Status</strong>
-                <span v-if="userProfile.statusPremium">Premium</span>
+                <span v-if="isPremium">Premium</span>
                 <span v-else>Not Premium</span>
             </div>
         </div>

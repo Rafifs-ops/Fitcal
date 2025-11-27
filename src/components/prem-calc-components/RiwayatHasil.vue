@@ -28,7 +28,7 @@ const user = computed(() => {
 })
 const savedResults = computed(() => { // Mendapatkan array historyResults dari variable user
     // Gunakan Optional Chaining (?.) agar tidak error jika user.value masih null/undefined
-    return user.value?.historyResults || [];
+    return user.value?.historyResults || false;
 });
 </script>
 

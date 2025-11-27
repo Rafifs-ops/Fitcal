@@ -30,6 +30,7 @@ async function simpanHasil() {
         });
 
         alert("Hasil Kalkuator berhasil disimpan....")
+        window.location.reload(); // Muat ulang halaman untuk refresh untuk update atau tambah history baru
 
     } catch (error) {
         console.error('Error saat menambahkan field: ', error);

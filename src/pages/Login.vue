@@ -38,7 +38,6 @@ function login() {
     localStorage.setItem("gender", getData.jenis_kelamin); // Menambahkan data localStorage berupa gender
     localStorage.setItem("email", getData.email); // Menambahkan data localStorage berupa email
     localStorage.setItem("userId", getData.id); // Menambahkan data localStorage berupa user id
-    localStorage.setItem("isPremium", getData.isPremium) // Menambahkan data localStorage berupa status premium
 
     router.push({ name: "Main" }) // Mengarahkan ke Home page
   } else {
